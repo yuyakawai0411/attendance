@@ -1,8 +1,11 @@
 # frozen_string_literal: true
 
 Rails.application.routes.draw do
-  # Define your application routes per the DSL in https://guides.rubyonrails.org/routing.html
-
-  # Defines the root path route ("/")
-  # root "articles#index"
+  namespace :api, format: 'json' do
+    resources :sessions, only: %i[new destroy] do
+      collection do
+        get :show
+      end
+    end
+  end
 end
