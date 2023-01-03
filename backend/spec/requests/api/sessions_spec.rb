@@ -1,59 +1,70 @@
+# frozen_string_literal: true
+
 require 'rails_helper'
 
-RSpec.describe "Sessions", type: :request do
-  describe "POST /sessions" do
-    subject { post '/api/v1/sessions', params: params }
-    let!(:operator) { create(:operator) }
+RSpec.describe 'Sessions', type: :request do
+  describe 'POST /sessions' do
+    before do
+      create(:operator)
+      post '/api/v1/sessions', params:
+    end
 
-    context 'emailとpasswordが正しい時' do
+    context 'when correct email and correct password' do
       let(:params) { { session: { email: 'test@test.com', password: 'password' } } }
-      it { is_expected.to eq(200) }
-      it do
-        subject
-        expect(JSON.parse(response.body)["message"]).to eq("ログインに成功しました!")
+
+      it { expect(response.status).to eq(200) }
+
+      it 'login sucsess message' do
+        expect(JSON.parse(response.body)['message']).to eq('ログインに成功しました!')
       end
     end
 
-    context 'emailが誤っている時' do
-      let(:params) { { session: {email: 'invalid@test.com', password: 'password'} } }
-      it { is_expected.to eq(200) }
-      it do
-        subject
-        expect(JSON.parse(response.body)["message"]).to eq("ログイン情報が間違っています!")
+    context 'when invalid email and correct password' do
+      let(:params) { { session: { email: 'invalid@test.com', password: 'password' } } }
+
+      it { expect(response.status).to eq(200) }
+
+      it 'login failed message' do
+        expect(JSON.parse(response.body)['message']).to eq('ログイン情報が間違っています!')
       end
     end
 
-    context 'passwordが誤っている時' do
-      let(:params) { { session: {email: 'test@test.com', password: 'invalid'} } }
-      it { is_expected.to eq(200) }
-      it do
-        subject
-        expect(JSON.parse(response.body)["message"]).to eq("ログイン情報が間違っています!")
+    context 'when correct email and invalid password' do
+      let(:params) { { session: { email: 'test@test.com', password: 'invalid' } } }
+
+      it { expect(response.status).to eq(200) }
+
+      it 'login failed message' do
+        expect(JSON.parse(response.body)['message']).to eq('ログイン情報が間違っています!')
       end
     end
   end
 
-  describe "delete /sessions" do
-    subject { delete "/api/v1/sessions/#{operator.id}" }
+  describe 'delete /sessions' do
     let!(:operator) { create(:operator) }
-  
-    context 'ログイン中の時' do
+
+    context 'when logged_in' do
       before do
         post '/api/v1/sessions', params: { session: { email: 'test@test.com', password: 'password' } }
+        delete "/api/v1/sessions/#{operator.id}"
       end
 
-      it { is_expected.to eq(200) }
-      it do
-        subject
-        expect(JSON.parse(response.body)["message"]).to eq("ログアウトしました!")
+      it { expect(response.status).to eq(200) }
+
+      it 'logout sucsess message' do
+        expect(JSON.parse(response.body)['message']).to eq('ログアウトしました!')
       end
     end
 
-    context 'ログインしていない時' do
-      it { is_expected.to eq(200) }
-      it do
-        subject
-        expect(JSON.parse(response.body)["message"]).to eq("ログインしていません!")
+    context 'when not logged_in' do
+      before do
+        delete "/api/v1/sessions/#{operator.id}"
+      end
+
+      it { expect(response.status).to eq(200) }
+
+      it 'logout failed message' do
+        expect(JSON.parse(response.body)['message']).to eq('ログインしていません!')
       end
     end
   end

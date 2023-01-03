@@ -1,7 +1,9 @@
+# frozen_string_literal: true
+
 module Api
   module V1
+    # Login and Logout session class
     class SessionsController < Api::V1::ApplicationController
-
       # @param  [Hash(Symbol => Object)] ログインするために必要な情報
       # @return [String] ログインに成功したかどうかの判断
       def create
