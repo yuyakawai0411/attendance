@@ -1,11 +1,10 @@
 # frozen_string_literal: true
 
 Rails.application.routes.draw do
-  namespace :api, format: 'json' do
-    resources :sessions, only: %i[new destroy] do
-      collection do
-        get :show
-      end
+  namespace :api do
+    namespace :v1 do
+      # sessionの保持と削除を行う
+      resources :sessions, only: %i[create destroy]
     end
   end
 end

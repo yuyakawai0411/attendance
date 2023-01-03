@@ -20,11 +20,11 @@ ActiveRecord::Schema[7.0].define(version: 0) do
   end
 
   create_table "operators", charset: "utf8mb4", force: :cascade do |t|
+    t.integer "company_id", null: false
     t.string "name", null: false
     t.string "email"
     t.string "password"
     t.integer "role"
-    t.integer "company_id", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["company_id"], name: "index_operators_on_company_id"
